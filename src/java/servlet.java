@@ -40,7 +40,7 @@ public class servlet extends HttpServlet {
                                         while(allCards[k] == null){
                                                 k = randomGenerator.nextInt(52);
                                         }
-                                        
+                                      
                                         cards[hitCount][i] = allCards[k];
                                         allCards[k] = null;
                                         strBuild.append("{\\\"image\\\":\\\"");
@@ -49,8 +49,10 @@ public class servlet extends HttpServlet {
                                         if(n<12)
                                             strBuild.append(",");
                                         else	
-                                            strBuild.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
-                                    }
+                                            //strBuild.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
+                                              strBuild.append("],\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
+                                      
+                                        }
                             }
                             }
                             catch(ArrayIndexOutOfBoundsException e1){}
@@ -62,17 +64,21 @@ public class servlet extends HttpServlet {
         }
     
 	public void doGet(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+            
             StringBuilder strBuild2 = new StringBuilder();
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
+            
             String card = request.getParameter("card");//Get the card player played
             String id = request.getParameter("id");    //Get the Player id
             int p = Integer.parseInt(id);
+            
             //--------Remove the plyed card from card list-----
             strBuild2.append("\"{\\\"cards\\\":[");
             for(int i = 0;i<13;i++){
                 if(cards[p][i].equals(card)){
                     int k = i;
+                    
                     for(int j = k;j<12;j++)
                     cards[p][j] = cards[p][j+1];
                 }
@@ -86,7 +92,7 @@ public class servlet extends HttpServlet {
               if(i <11)
                strBuild2.append(",");
               else
-                  strBuild2.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");
+               strBuild2.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");
                   }
             String string = strBuild2.toString();
              out.print(string);
