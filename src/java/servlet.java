@@ -12,9 +12,10 @@ public class servlet extends HttpServlet {
 	String allCards[] = {"cards/0_1.png","cards/0_2.png","cards/0_3.png","cards/0_4.png","cards/0_5.png","cards/0_6.png","cards/0_7.png","cards/0_8.png","cards/0_9.png","cards/0_10.png","cards/0_11.png","cards/0_12.png","cards/0_13.png","cards/1_1.png","cards/1_2.png","cards/1_3.png","cards/1_4.png","cards/1_5.png","cards/1_6.png","cards/1_7.png","cards/1_8.png","cards/1_9.png","cards/1_10.png","cards/1_11.png","cards/1_12.png","cards/1_13.png","cards/2_1.png","cards/2_2.png","cards/2_3.png","cards/2_4.png","cards/2_5.png","cards/2_6.png","cards/2_7.png","cards/2_8.png","cards/2_9.png","cards/2_10.png","cards/2_11.png","cards/2_12.png","cards/2_13.png","cards/3_1.png","cards/3_2.png","cards/3_3.png","cards/3_4.png","cards/3_5.png","cards/3_6.png","cards/3_7.png","cards/3_8.png","cards/3_9.png","cards/3_10.png","cards/3_11.png","cards/3_12.png","cards/3_13.png"};
 	String[][] cards = new String[5][15];
 	int k,i,j,n;
-	
-        
+	static String[] playedcards = new String [5];
+        static String string;
 	public void doPost(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+                
                 StringBuilder strBuild = new StringBuilder();
                 response.setContentType("text/html"); 
                 PrintWriter out = response.getWriter();
@@ -40,7 +41,7 @@ public class servlet extends HttpServlet {
                                         while(allCards[k] == null){
                                                 k = randomGenerator.nextInt(52);
                                         }
-                                      
+                                        
                                         cards[hitCount][i] = allCards[k];
                                         allCards[k] = null;
                                         strBuild.append("{\\\"image\\\":\\\"");
@@ -49,10 +50,8 @@ public class servlet extends HttpServlet {
                                         if(n<12)
                                             strBuild.append(",");
                                         else	
-                                            //strBuild.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
-                                              strBuild.append("],\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
-                                      
-                                        }
+                                            strBuild.append("],\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");	
+                                    }
                             }
                             }
                             catch(ArrayIndexOutOfBoundsException e1){}
@@ -64,23 +63,25 @@ public class servlet extends HttpServlet {
         }
     
 	public void doGet(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-            
             StringBuilder strBuild2 = new StringBuilder();
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
-            
             String card = request.getParameter("card");//Get the card player played
             String id = request.getParameter("id");    //Get the Player id
             int p = Integer.parseInt(id);
             
-            //--------Remove the plyed card from card list-----
+           // HttpSession session = request.getSession(true);
+          
+            //out.print(id);
+            playedcards[p] = card;
+            //--------Remove the played card from card list-----
             strBuild2.append("\"{\\\"cards\\\":[");
             for(int i = 0;i<13;i++){
                 if(cards[p][i].equals(card)){
-                    int k = i;
-                    
+                    /*int k = i;
                     for(int j = k;j<12;j++)
-                    cards[p][j] = cards[p][j+1];
+                    cards[p][j] = cards[p][j+1];*/
+                    cards[p][i] = " ";
                 }
                 
             }
@@ -91,11 +92,36 @@ public class servlet extends HttpServlet {
               strBuild2.append("\\\"}");
               if(i <11)
                strBuild2.append(",");
-              else
-               strBuild2.append("],\\\"card1\\\":\\\"cards/3_4.png\\\" , \\\"card2\\\":\\\"cards/3_1.png\\\",\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");
-                  }
-            String string = strBuild2.toString();
+              else{
+                  strBuild2.append("],\\\"card1\\\":\\\"");
+             
+                  strBuild2.append(playedcards[1]);
+                  
+                  strBuild2.append("\\\",");
+                  
+                  
+                  strBuild2.append("\\\"card2\\\":\\\"");
+                  strBuild2.append(playedcards[2]);
+                  strBuild2.append("\\\",");
+                  
+                  strBuild2.append("\\\"card3\\\":\\\"");
+                  strBuild2.append(playedcards[3]);
+                  strBuild2.append("\\\",");
+                  
+                 
+                  strBuild2.append("\\\"mycard\\\":\\\"");
+                  strBuild2.append(playedcards[4]);
+                  strBuild2.append("\\\",");
+                  strBuild2.append("\\\"showHand\\\" : true, \\\"showCards\\\" : true , \\\"message\\\" : \\\"Play your card\\\"}\"");
+              }
+            }
+            HttpSession session = request.getSession();
+            session.setAttribute("card",card);
+            session.setAttribute("Id",id);
+            string = strBuild2.toString();
              out.print(string);
+             
+         
             
            
 	}
